@@ -1,0 +1,45 @@
+# KT Mi:dm 2.0 Mini LoRA fine-tuning configuration.
+# Used by src/halo/training/lora_finetune.py.
+
+defaults:
+  - base
+
+model:
+  base_model_id: "K-intelligence/Midm-2.0-Base-Instruct"
+  max_seq_length: 512
+  instruction_template_version: 1
+
+lora:
+  rank: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - v_proj
+    - k_proj
+    - o_proj
+  task_type: CAUSAL_LM
+
+training:
+  learning_rate: 1.0e-4
+  num_epochs: 3
+  per_device_batch_size: 4
+  gradient_accumulation_steps: 4
+  warmup_ratio: 0.1
+  lr_scheduler: cosine
+  weight_decay: 0.01
+  mixed_precision: bf16
+
+data:
+  corpus_path: data/processed/corpus_v1.parquet
+  train_ratio: 0.7
+  val_ratio: 0.15
+  test_ratio: 0.15
+  stratify_by: category
+
+output:
+  adapter_dir: artifacts/lora_adapter_v0
+
+tracking:
+  wandb_project: halo
+  wandb_run_name: midm_mini_lora_v0

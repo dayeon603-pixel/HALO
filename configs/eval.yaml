@@ -1,0 +1,29 @@
+# HALO evaluation configuration.
+# Used by src/halo/training/evaluate.py.
+
+defaults:
+  - base
+
+eval:
+  classifier_kind: midm_lora  # midm_lora | solar_pro | rule_baseline | midm_zero_shot
+  model_path: artifacts/lora_adapter_v0
+  test_data_path: data/processed/corpus_v1_test.parquet
+
+metrics:
+  compute_ece: true
+  compute_latency: true
+  latency_samples: 100
+
+targets:
+  primary_categories:
+    - voice_phishing
+    - family_impersonation
+    - benign
+  min_f1_primary: 0.82
+  min_f1_macro: 0.75
+  max_ece: 0.05
+  max_fpr_benign: 0.05
+  max_latency_p50_ms: 500
+
+output:
+  report_path: artifacts/eval_report.md

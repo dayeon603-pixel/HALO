@@ -1,0 +1,24 @@
+# Base HALO configuration (Hydra-style).
+# Override by composing with specific configs in this folder.
+
+project:
+  name: halo
+  version: 0.1.0
+
+seed: 42
+
+paths:
+  data_raw: data/raw
+  data_processed: data/processed
+  data_features: data/features
+  artifacts: artifacts
+  logs: logs
+
+logging:
+  level: INFO
+  sink: stderr
+
+hardware:
+  device: auto  # auto, cuda, cpu, mps
+  num_gpus: 1
+  precision: bf16
