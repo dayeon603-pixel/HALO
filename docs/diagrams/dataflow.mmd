@@ -1,0 +1,19 @@
+%% HALO Data Flow — Privacy boundaries.
+
+sequenceDiagram
+    participant Device as Android Device
+    participant Buffer as Ephemeral Buffer (30s TTL)
+    participant MIDM as Mi:dm 2.0 Mini (on-device)
+    participant UI as Soft Intervention UI
+    participant AuditLog as Encrypted SQLite (device-local)
+    participant Server as Metadata server (no PII)
+    participant Family as Family Web (Phase 2)
+
+    Device->>Buffer: Incoming SMS / URL / etc.
+    Buffer->>MIDM: Raw text (ephemeral)
+    MIDM->>UI: category + risk_score + rationale
+    Buffer-->>Buffer: Clear raw text after 30 seconds
+    UI->>AuditLog: hashed_sender + category + risk_score (no PII)
+    AuditLog-->>Server: aggregated telemetry (opt-in only)
+    UI-->>Family: Phase 2: encrypted push notification
+    Note over Server: Raw text NEVER transmitted

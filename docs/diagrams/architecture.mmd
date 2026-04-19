@@ -1,0 +1,52 @@
+%% HALO 4-Layer Architecture (Mermaid diagram source).
+%% Render with Mermaid CLI or any Mermaid-compatible tool:
+%%   mmdc -i architecture.mmd -o architecture.svg
+
+flowchart TB
+    subgraph L1["Layer 1: Sensing"]
+        SMS[SMS / MMS]
+        URL[URL / QR Code]
+        VOICE[Voice Call<br/>Phase 2]
+        MSGR[Messenger<br/>Phase 2]
+        SCREEN[Bank App Screen<br/>Phase 2]
+    end
+
+    subgraph L2["Layer 2: Classification"]
+        MIDM[KT Mi:dm 2.0 Mini 2.3B<br/>INT4 on QNN / NNAPI]
+        SOLAR[Upstage Solar-pro<br/>cloud helper]
+    end
+
+    subgraph L3["Layer 3: Metacognition Probe"]
+        PROBE[User confidence probe]
+        BRIER[Per-sender Brier score]
+        TREND[Relationship trust time series]
+    end
+
+    subgraph L4["Layer 4: Intervention"]
+        SOFT[SOFT: full-screen warning<br/>Y1]
+        MEDIUM[MEDIUM: family alert<br/>WebRTC call<br/>Phase 2]
+        HARD[HARD: 5-minute transfer lock<br/>Phase 2]
+        POST[POST: 경찰청 신고 form auto-gen]
+    end
+
+    SMS --> L2
+    URL --> L2
+    VOICE --> L2
+    MSGR --> L2
+    SCREEN --> L2
+
+    MIDM --> L3
+    SOLAR --> L3
+
+    PROBE --> L4
+    BRIER --> L4
+    TREND --> L4
+
+    SOFT --> POST
+    MEDIUM --> POST
+    HARD --> POST
+
+    style L1 fill:#e8f4fd,stroke:#4a90e2
+    style L2 fill:#fff3e0,stroke:#f57c00
+    style L3 fill:#f3e5f5,stroke:#9c27b0
+    style L4 fill:#fff9c4,stroke:#f9a825

@@ -4,9 +4,12 @@
 > 어르신 옆에서 "잠깐만요"를 대신 말해주는 온디바이스 한국어 sLLM 사기 방어 에이전트.
 > A real-time, on-device Korean sLLM scam-defense agent for elder users.
 
+[![CI](https://github.com/dayeon603-pixel/HALO/actions/workflows/ci.yml/badge.svg)](https://github.com/dayeon603-pixel/HALO/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Status: Pre-alpha](https://img.shields.io/badge/Status-Pre--alpha-orange)]()
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue)]()
 [![Built with Mi:dm 2.0 Mini](https://img.shields.io/badge/sLLM-KT_Midm_2.0_Mini-green)]()
+[![2026 AI Champion](https://img.shields.io/badge/2026-AI_Champion_%EB%8C%80%ED%9A%8C-red)]()
 
 ---
 
@@ -14,7 +17,7 @@
 
 | 항목 | 내용 |
 |---|---|
-| **문제** | 한국 연간 보이스피싱 피해 ~7,000억 원, 70% 이상이 60대 이상 |
+| **문제** | 한국 2024년 보이스피싱 피해 **8,545억 원** (경찰청, 역대 최고). 60세 이상 피해 금액 비중 약 35~40%. |
 | **해결** | 5채널(SMS·통화·카톡·화면·URL)을 온디바이스 Korean sLLM이 실시간 분석, 3단계 가족 연결형 개입 |
 | **핵심 연구 자산** | [MetaMirage](https://www.kaggle.com/competitions) 메타인지 부호 역전 발견 (r = −0.84), Kaggle AGI Benchmark Challenge 2026 제출 |
 | **타겟 플랫폼** | Android (주력), iOS (Phase 2) |
@@ -43,8 +46,8 @@ HALO는 세 가지를 동시에 해결한다.
 
 ```
 Layer 1  SENSING         →  5채널 수집 (SMS·통화·카톡·화면·URL)
-Layer 2  CLASSIFICATION  →  Solar-mini 1.5B 온디바이스, 6 카테고리 분류
-Layer 3  METACOG PROBE   →  사용자 확신도 ∙ 관계 누적 추적 (MetaMirage 전이)
+Layer 2  CLASSIFICATION  →  KT Mi:dm 2.0 Mini (2.3B) 온디바이스, 6+1 카테고리 분류
+Layer 3  METACOG PROBE   →  사용자 확신도 · 관계 누적 추적 (MetaMirage 전이)
 Layer 4  INTERVENTION    →  Soft / Medium(가족 연결) / Hard(이체 잠금)
 ```
 
@@ -72,7 +75,7 @@ halo/
 │
 ├── configs/                    # Hydra/YAML 설정
 │   ├── base.yaml
-│   ├── model_solar_mini.yaml
+│   ├── model_midm_mini.yaml
 │   └── eval.yaml
 │
 ├── data/
@@ -90,7 +93,7 @@ halo/
 │   │   ├── probe.py            # 메타인지 프로브
 │   │   └── risk.py             # Risk 스코어링 엔진
 │   ├── training/
-│   │   ├── lora_finetune.py    # Solar-mini LoRA 파이프라인
+│   │   ├── lora_finetune.py    # Mi:dm 2.0 Mini LoRA 파이프라인
 │   │   ├── evaluate.py         # 평가 하네스
 │   │   └── delta_update.py     # 주간 델타 업데이트
 │   ├── inference/
@@ -120,28 +123,52 @@ halo/
 
 ## 빠른 시작
 
-### Python 환경
+Make targets (see `Makefile`):
 ```bash
-cd ~/halo
-python3.11 -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
-pytest tests/
+make dev         # dev 의존성 + pre-commit 훅 설치
+make test        # pytest 실행
+make lint        # ruff + black 검사
+make demo        # Solar-pro 분류기 프로토타입 실행
+```
+
+### 환경 점검
+```bash
+python scripts/check_env.py
+```
+
+### 분류기 데모 (Upstage Solar-pro API 프로토타입)
+```bash
+export UPSTAGE_API_KEY=<your_key>
+python -m halo.demo.classifier_demo
 ```
 
 ### 데이터 파이프라인 (M1 목표)
 ```bash
-python scripts/build_corpus.py --sources police,kfss,community --out data/processed/corpus_v0.parquet
+python scripts/build_corpus.py \
+    --sources police,kisa,community \
+    --output data/processed/corpus_v0.parquet
 ```
 
 ### 모델 학습 (M2 목표, NIPA GPU)
 ```bash
-python scripts/train.py --config configs/model_solar_mini.yaml --wandb-project halo
+python scripts/train.py --config configs/model_midm_mini.yaml
+```
+
+### 평가 (M2 목표)
+```bash
+python scripts/evaluate.py --config configs/eval.yaml
 ```
 
 ### Android Alpha (M3 목표)
 ```bash
 cd android && ./gradlew assembleDebug
 adb install app/build/outputs/apk/debug/app-debug.apk
+```
+
+### Docker (선택)
+```bash
+docker build -t halo:dev .
+docker run --rm -it halo:dev make test
 ```
 
 ---
@@ -151,7 +178,7 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 | 월 | 마일스톤 |
 |---|---|
 | **M1 · 2026-06** | Scam corpus v0 (300+ 사례) + 메타인지 프로브 설계 |
-| **M2 · 2026-07** | Solar-mini LoRA 모델 v0 + 평가 파이프라인 |
+| **M2 · 2026-07** | Mi:dm 2.0 Mini LoRA 모델 v0 + Galaxy S24 latency 실측 + 평가 파이프라인 |
 | **M3 · 2026-08** | Android Alpha (SMS + 카톡 통합) + Risk Engine v0 |
 | **M4 · 2026-09** | 음성 통합 + 성남시 어르신복지관 파일럿 |
 | **M5 · 2026-10** | iOS 포팅 + 금융앱 연동 + Hard 개입 완성 |
@@ -177,9 +204,18 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 
 | 자산 | 역할 | 상태 |
 |---|---|---|
-| **MetaMirage** | Layer 3 메타인지 프로브 이론 기반 — r = −0.84 부호 역전 발견 | Kaggle AGI Benchmark Challenge 2026 제출 (2026-04-16) |
+| **MetaMirage** | Layer 3 메타인지 프로브 이론 기반. r = −0.84 부호 역전 발견. | Kaggle AGI Benchmark Challenge 2026 제출 (2026-04-16) |
 | **SPS Framework** | 적대적 변형 corpus 생성 방법론 | 본 팀 보유 |
 | **QuantFlow** | 투자 사기 탐지용 금융상품 구조 분석 | 본 팀 보유 |
+
+---
+
+## 기여
+
+- [CONTRIBUTING.md](CONTRIBUTING.md): 기여 절차, 개발 환경, 코드 스타일
+- [SECURITY.md](SECURITY.md): 보안 취약점 신고
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md): 커뮤니티 행동 강령
+- [CHANGELOG.md](CHANGELOG.md): 변경 이력
 
 ---
 
