@@ -3,6 +3,76 @@
 Deep dive into the 4-layer on-device architecture. This document complements
 `whitepaper.md` §3 with implementation-level detail for contributors.
 
+## System overview
+
+```mermaid
+flowchart TB
+    subgraph L1["Layer 1: Sensing"]
+        SMS[SMS / MMS]
+        URL[URL / QR Code]
+        VOICE[Voice Call<br/>Phase 2]
+        MSGR[Messenger<br/>Phase 2]
+        SCREEN[Bank App Screen<br/>Phase 2]
+    end
+
+    subgraph L2["Layer 2: Classification"]
+        MIDM[KT Mi:dm 2.0 Mini 2.3B<br/>INT4 on QNN / NNAPI]
+        SOLAR[Upstage Solar-pro<br/>cloud helper]
+    end
+
+    subgraph L3["Layer 3: Metacognition Probe"]
+        PROBE[User confidence probe]
+        BRIER[Per-sender Brier score]
+        TREND[Relationship trust time series]
+    end
+
+    subgraph L4["Layer 4: Intervention"]
+        SOFT[SOFT: full-screen warning<br/>Y1]
+        MEDIUM[MEDIUM: family alert<br/>Phase 2]
+        HARD[HARD: transfer lock<br/>Phase 2]
+        POST[POST: 경찰청 신고 auto-gen]
+    end
+
+    SMS --> L2
+    URL --> L2
+    VOICE --> L2
+    MSGR --> L2
+    SCREEN --> L2
+
+    MIDM --> L3
+    SOLAR --> L3
+
+    PROBE --> L4
+    BRIER --> L4
+    TREND --> L4
+
+    SOFT --> POST
+    MEDIUM --> POST
+    HARD --> POST
+```
+
+## Data flow with privacy boundaries
+
+```mermaid
+sequenceDiagram
+    participant Device as Android Device
+    participant Buffer as Ephemeral Buffer (30s TTL)
+    participant MIDM as Mi:dm 2.0 Mini (on-device)
+    participant UI as Soft Intervention UI
+    participant AuditLog as Encrypted SQLite (device-local)
+    participant Server as Metadata server (no PII)
+    participant Family as Family Web (Phase 2)
+
+    Device->>Buffer: Incoming SMS / URL / etc.
+    Buffer->>MIDM: Raw text (ephemeral)
+    MIDM->>UI: category + risk_score + rationale
+    Buffer-->>Buffer: Clear raw text after 30 seconds
+    UI->>AuditLog: hashed_sender + category + risk_score
+    AuditLog-->>Server: aggregated telemetry (opt-in only)
+    UI-->>Family: Phase 2: encrypted push notification
+    Note over Server: Raw text NEVER transmitted
+```
+
 ## Design principles
 
 1. Privacy by default. Raw media never leaves the device.
