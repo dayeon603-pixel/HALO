@@ -37,6 +37,7 @@ import argparse
 import json
 import os
 import sys
+import statistics
 import time
 from collections import defaultdict
 from dataclasses import dataclass
@@ -401,7 +402,7 @@ def run_demo(
         primary_f1s.append(f1)
 
     primary_f1_mean = sum(primary_f1s) / len(primary_f1s) if primary_f1s else 0.0
-    latency_p50 = sorted(latencies)[len(latencies) // 2] if latencies else 0.0
+    latency_p50 = statistics.median(latencies) if latencies else 0.0
     adversarial_acc = (adversarial_correct / adversarial_total) if adversarial_total else 0.0
 
     console.print(
