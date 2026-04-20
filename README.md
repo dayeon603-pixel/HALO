@@ -44,12 +44,14 @@ HALO는 세 가지를 동시에 해결한다.
 
 ## 시스템 구조 (4-Layer)
 
-```
-Layer 1  SENSING         →  5채널 수집 (SMS·통화·카톡·화면·URL)
-Layer 2  CLASSIFICATION  →  KT Mi:dm 2.0 Mini (2.3B) 온디바이스, 6+1 카테고리 분류
-Layer 3  METACOG PROBE   →  사용자 확신도 · 관계 누적 추적 (MetaMirage 전이)
-Layer 4  INTERVENTION    →  Soft / Medium(가족 연결) / Hard(이체 잠금)
-```
+![HALO 4-Layer Architecture](docs/images/architecture.svg)
+
+| Layer | 역할 | Y1 scope |
+|---|---|---|
+| **1. SENSING** | 5채널 수집 (SMS · 통화 · 카톡 · 화면 · URL) | SMS + URL only |
+| **2. CLASSIFICATION** | KT Mi:dm 2.0 Mini (2.3B) 온디바이스, 6+1 카테고리 분류 | Y1 |
+| **3. METACOG PROBE** | 사용자 확신도 · 관계 누적 추적 (MetaMirage 전이) | Y1 |
+| **4. INTERVENTION** | Soft / Medium(가족) / Hard(이체 잠금) | Soft only |
 
 자세한 아키텍처는 [`docs/architecture.md`](docs/architecture.md) 참조.
 
