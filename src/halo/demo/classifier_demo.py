@@ -151,10 +151,13 @@ class SolarClassifier:
         )
 
 
-# Expanded sample battery. 25 samples across 6+1 categories, including
-# 6 adversarial SPS-style variants derived from the base samples.
+# Expanded sample battery. 60 samples across 6+1 categories, including
+# 17 adversarial SPS-style variants covering emoji spacing, character
+# substitution, similar domains, multi-turn setups, hanja mixing,
+# homoglyph attacks, and compressed/obfuscated forms.
+# All samples are synthetic, based on public 경찰청 보도자료 case patterns.
 SAMPLE_MESSAGES: list[tuple[str, ScamCategory, str]] = [
-    # voice_phishing (4 base + 1 adversarial)
+    # ========== voice_phishing (8 base + 4 adversarial) ==========
     ("서울중앙지방검찰청 김철수 검사입니다. 귀하의 계좌가 금융사기 사건에 연루되어 즉시 확인이 필요합니다.",
      "voice_phishing", "base"),
     ("어머님, 아드님이 교통사고로 중환자실에 입원하셨습니다. 수술비 긴급 송금이 필요한 상황입니다.",
@@ -163,44 +166,108 @@ SAMPLE_MESSAGES: list[tuple[str, ScamCategory, str]] = [
      "voice_phishing", "base"),
     ("국세청 체납 담당입니다. 체납 세금 미납 시 자산 동결 처리됩니다. 즉시 확인 부탁드립니다.",
      "voice_phishing", "base"),
+    ("대검찰청 사이버범죄수사단 이민수 수사관입니다. 귀하의 주민등록번호가 마약사건에 도용되어 긴급 보안계좌 이체가 필요합니다.",
+     "voice_phishing", "base"),
+    ("우리은행 보안팀 최영희 실장입니다. 귀하의 카드로 300만원 해외 승인이 시도되었습니다. 본인 확인 후 차단 처리해드리겠습니다.",
+     "voice_phishing", "base"),
+    ("경찰청 지능범죄수사대 강형사입니다. 귀하가 피해자로 등록된 사건이 있어 연락드렸습니다. 통화 녹음되니 솔직히 답해주세요.",
+     "voice_phishing", "base"),
+    ("건강보험공단 납부 조사과입니다. 장기요양보험 체납이 확인되었습니다. 오늘 중 납부하지 않으면 연체 가산금이 부과됩니다.",
+     "voice_phishing", "base"),
     ("서울중앙지 ✨검✨ 김철수 검 사 입 니 다 계 좌 확 인 부 탁 드 립 니 다",
      "voice_phishing", "adversarial_emoji_spacing"),
-    # romance_scam (3)
+    ("[긴급] 民事 소송 관련 출석 요청. 불응 시 압류 절차 진행. 확인: http://court-kr.co/notice",
+     "voice_phishing", "adversarial_hanja_domain"),
+    ("서울중앙지방검찰청입니다 . 귀하의. 계좌가. 사건에. 연루. 즉시연락.010-OOOO-XXXX",
+     "voice_phishing", "adversarial_puncmangle"),
+    ("검찰청ㅇ ㅣ민수 수사관ㅇ ㅣㅂ ㅁ다 긴급번ㅎ ㅗ OOOOXXXX",
+     "voice_phishing", "adversarial_jamo_split"),
+    # ========== romance_scam (6 base + 2 adversarial) ==========
     ("안녕하세요 혹시 저 기억하세요? 작년에 카페에서 뵌 적 있는데 지금 해외 파견 중인데 한국 분이셔서 너무 반가워요.",
      "romance_scam", "base"),
     ("시리아 임무 중인 미군 대위입니다. 고독한 시간에 당신의 메시지가 큰 위로가 됩니다. 특별한 관계가 되고 싶어요.",
      "romance_scam", "base"),
     ("미국 유전 엔지니어입니다. 한국 투자 파트너를 찾고 있어요. 믿을 수 있는 분이라 연락드립니다.",
      "romance_scam", "base"),
-    # investment_scam (3 base + 1 adversarial)
+    ("서울에 방문 예정인데 당신에게 가방을 선물로 보냈어요. 관세 300달러만 대신 내주시면 도착해요. 배송번호 알려드릴게요.",
+     "romance_scam", "base"),
+    ("우리 만난 지 한 달 되었네요. 저 이번에 큰 프로젝트 투자 기회가 생겼어요. 당신 이름으로 같이 시작하면 수익 반반 나눠요.",
+     "romance_scam", "base"),
+    ("사실은 저 지금 공항에서 문제가 생겨서 500만원 필요해요. 당신이 믿을 사람이라 부탁드려요. 돌아가서 두 배로 갚을게요.",
+     "romance_scam", "base"),
+    ("안녕ㅎㅏ세요 혹시저 기 억 하세요 작 년카페 에서뵌적 있 는 데해외 파 견 중",
+     "romance_scam", "adversarial_jamo_split"),
+    ("Hello 저는 US army major 입니다. Syria 파견 중 ㅎㅏㄴ국분 만나 반갑네요.",
+     "romance_scam", "adversarial_code_mix"),
+    # ========== investment_scam (7 base + 3 adversarial) ==========
     ("【LG화학 단체카톡】 내부자 추천 특급 정보. 내일 상한가 90% 확실. 선입금 500만원 가능하신 분만 연락주세요.",
      "investment_scam", "base"),
     ("비트코인 상장 전 한정 사전 판매. 3일 안에 500% 수익 보장. 선착순 20명만 모집합니다.",
      "investment_scam", "base"),
     ("주식 리딩방 유료 가입 안내. 월 10% 수익률 실적. 지금 가입 시 첫 달 무료 체험.",
      "investment_scam", "base"),
+    ("해외 부동산 선임대 프로젝트 한정 모집. 원금 보장 + 연 18% 배당. 관심 있으시면 상담 예약 주세요.",
+     "investment_scam", "base"),
+    ("신규 상장 알트코인 에어드랍 이벤트. 지금 지갑 주소 남기시면 500 토큰 무료 지급. 당첨 시 한화 80만원 상당.",
+     "investment_scam", "base"),
+    ("[공식] 삼성전자 임원 정보통. 내일 장 시작 전 반드시 매수. 목표가 100,000원. 전 재산 몰빵 추천.",
+     "investment_scam", "base"),
+    ("FX 마진 거래 AI 자동매매. 월 최소 30% 수익 보장. 손실 시 100% 환불. 데모계정 무료 지급.",
+     "investment_scam", "base"),
     ("[Lg화학 한정] 내부자 추천 주식 내일상한가 90% 지금 입금 가능하신 분만",
      "investment_scam", "adversarial_char_substitute"),
-    # loan_scam (2)
+    ("비 트 코 인 상 장 전 사 전 판 매 / 3일 / 500% 수 익 / 선 착 순",
+     "investment_scam", "adversarial_spacing"),
+    ("【LG𝐡𝐞𝐦𝐢𝐜𝐚𝐥 단톡】 내부정보 상한가90% 선입금500만 ₩즉시",
+     "investment_scam", "adversarial_unicode_homoglyph"),
+    # ========== loan_scam (5 base + 2 adversarial) ==========
     ("저금리 3.5% 특별 대출 상품 안내. 신용등급 무관 5천만원까지 당일 승인. 오늘 오후 4시까지만 모집: 010-XXXX-XXXX",
      "loan_scam", "base"),
     ("신용회복 전문 상담. 연체 기록 삭제 가능. 선수수료 30만원 입금 후 진행.",
      "loan_scam", "base"),
-    # subsidy_scam (2 base + 1 adversarial)
+    ("금융위 인가 정책자금 대출. 신용등급 7등급 이하도 2천만원 가능. 조건 없이 즉시 승인.",
+     "loan_scam", "base"),
+    ("기존 대출 통합 대환 저금리 이벤트. 연 1.9% 특별 금리. 신청서만 보내주시면 10분 내 승인 안내드립니다.",
+     "loan_scam", "base"),
+    ("국책은행 특별대출 안내. 소득 증빙 불필요. 선입금 보증보험료 55만원만 있으면 3천만원 즉시 입금.",
+     "loan_scam", "base"),
+    ("저금리3.5%특별대출 신용무관 5천만 당일 010OOOOXXXX",
+     "loan_scam", "adversarial_compressed"),
+    ("정★책★자★금 대★출 인가 2천만 신용무관 즉시 → bit.ly/KOR-loan",
+     "loan_scam", "adversarial_star_obfuscation"),
+    # ========== subsidy_scam (5 base + 2 adversarial) ==========
     ("[정부24] 2026년 근로장려금 환급 대상자 최종 선정 안내. 아래 링크에서 본인인증 후 즉시 지급 가능: http://gov24-bonus.kr/refund",
      "subsidy_scam", "base"),
     ("건강보험공단입니다. 환급금 120만원이 발생했습니다. 본인인증 페이지에서 확인 바랍니다: http://hira-refund.com",
      "subsidy_scam", "base"),
+    ("[국세청] 연말정산 추가 환급금 87만원 대기 중. 3일 이내 본인인증 진행: nts-korea.net",
+     "subsidy_scam", "base"),
+    ("[서울시청] 2026 긴급재난지원금 신청 대상자 확정. 아래 공식페이지에서 신청 바랍니다: seoul-covid-support.kr",
+     "subsidy_scam", "base"),
+    ("[고용노동부] 실업급여 미수령액 확인 바랍니다. 본인인증 후 자동 입금 처리됩니다: employment-refund.kr",
+     "subsidy_scam", "base"),
     ("[정부 24] 근로 장려금 환급 대상. 링크 → gov24-bonus.kr/refund",
      "subsidy_scam", "adversarial_similar_domain"),
-    # family_impersonation (2 base + 1 adversarial)
+    ("[정부𝟤𝟦] 2026 근로장려금 120만원 환급. 아래 링크 본인인증: g﹒o﹒v﹒24-korea﹒net",
+     "subsidy_scam", "adversarial_unicode_homoglyph"),
+    # ========== family_impersonation (5 base + 3 adversarial) ==========
     ("엄마 나야. 폰이 고장나서 친구 폰으로 보내. 지금 급해서 그런데 100만원만 급하게 보내줄 수 있어?",
      "family_impersonation", "base"),
     ("아빠 나 민수야. 지금 친구랑 큰일이 생겼는데 급하게 50만원만 보내줘. 이따가 설명할게요.",
      "family_impersonation", "base"),
+    ("할머니 저 손자예요. 폰 떨어뜨려서 액정 다 깨졌어요. 지금 수리비 30만원 입금해주시면 내일 바로 갚을게요.",
+     "family_impersonation", "base"),
+    ("엄마 이 계좌로 당장 200만원 부탁해. 카톡 답장 늦는 건 지금 병원이라 그래. 이따 설명할게.",
+     "family_impersonation", "base"),
+    ("누나 나야. 형한테 말하지 말고 나한테만 200만원 입금해줘. 진짜 부탁이야 다른 사람한테 얘기하지 말고.",
+     "family_impersonation", "base"),
     ("엄마 나야 폰고장 친구폰 긴급 100만원 송금 부탁",
      "family_impersonation", "adversarial_compressed"),
-    # benign (5)
+    ("엄마ㅇㅣ야 폰고ㅈ ㅏㅇ 친구폰 긴급 100만원 ㅅ ㅗㅇㅁ ㅜㄴ 부탁",
+     "family_impersonation", "adversarial_jamo_split"),
+    ("𝗲𝗺𝗺𝗮 나야 폰 고장 100만원 ASAP 친구폰으로 보냄",
+     "family_impersonation", "adversarial_unicode_code_mix"),
+    # ========== benign (8) ==========
     ("내일 저녁 7시 강남역에서 만날까? 지난번에 얘기한 카페에서 보자.",
      "benign", "base"),
     ("[NH농협] 2026년 4월 5일 송금 50,000원 완료. 잔액 1,234,567원.",
@@ -210,6 +277,12 @@ SAMPLE_MESSAGES: list[tuple[str, ScamCategory, str]] = [
     ("[택배] 고객님 주문하신 상품이 배송 완료되었습니다.",
      "benign", "base"),
     ("안녕 친구, 지난주에 빌린 책 다음주에 돌려줄게. 너무 재밌더라.",
+     "benign", "base"),
+    ("[Web발신] 신한카드 승인 13,500원 04/20 14:22 스타벅스 강남R점. 잔여한도 2,450,000원",
+     "benign", "base"),
+    ("안녕하세요. 저는 한국폴리텍대학 김교수입니다. 어제 세미나 질문 주신 내용 정리해서 이메일 드렸습니다.",
+     "benign", "base"),
+    ("안녕하세요 고객님, 주문하신 제품 색상이 일시품절되어 발송이 2일 지연될 수 있습니다. 양해 부탁드립니다.",
      "benign", "base"),
 ]
 
