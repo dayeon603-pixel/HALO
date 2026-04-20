@@ -1,0 +1,384 @@
+{
+  "samples": [
+    {
+      "index": 1,
+      "variant": "base",
+      "message": "서울중앙지방검찰청 김철수 검사입니다. 귀하의 계좌가 금융사기 사건에 연루되어 즉시 확인이 필요합니다.",
+      "expected": "voice_phishing",
+      "predicted": "voice_phishing",
+      "correct": true,
+      "risk_score": 95,
+      "rationale": "검찰청 사칭 및 계좌 확인 요청은 전형적인 보이스피싱 수법입니다.",
+      "key_signals": [
+        "검찰청 사칭",
+        "즉시 계좌 확인 요청"
+      ],
+      "latency_ms": 1510.7804170111194
+    },
+    {
+      "index": 2,
+      "variant": "base",
+      "message": "어머님, 아드님이 교통사고로 중환자실에 입원하셨습니다. 수술비 긴급 송금이 필요한 상황입니다.",
+      "expected": "voice_phishing",
+      "predicted": "family_impersonation",
+      "correct": false,
+      "risk_score": 85,
+      "rationale": "가족 사칭 사기의 전형적인 수법으로, 긴급한 상황을 언급하며 금전을 요구합니다.",
+      "key_signals": [
+        "가족 위장",
+        "긴급 상황 언급",
+        "금전 요구"
+      ],
+      "latency_ms": 1433.0512089654803
+    },
+    {
+      "index": 3,
+      "variant": "base",
+      "message": "금융감독원 조사팀 박수사관입니다. 귀하의 명의로 불법 대출이 접수되었습니다. 지금 바로 조치가 필요합니다.",
+      "expected": "voice_phishing",
+      "predicted": "voice_phishing",
+      "correct": true,
+      "risk_score": 90,
+      "rationale": "금융감독원 사칭 및 긴급 조치 요구는 전형적인 보이스피싱 수법입니다.",
+      "key_signals": [
+        "금융감독원 사칭",
+        "긴급 조치 요구"
+      ],
+      "latency_ms": 979.6737500000745
+    },
+    {
+      "index": 4,
+      "variant": "base",
+      "message": "국세청 체납 담당입니다. 체납 세금 미납 시 자산 동결 처리됩니다. 즉시 확인 부탁드립니다.",
+      "expected": "voice_phishing",
+      "predicted": "subsidy_scam",
+      "correct": false,
+      "risk_score": 85,
+      "rationale": "국세청 사칭 및 자산 동결 위협으로 지원금 사칭 가능성이 높음",
+      "key_signals": [
+        "국세청 사칭",
+        "자산 동결 위협"
+      ],
+      "latency_ms": 1509.922125027515
+    },
+    {
+      "index": 5,
+      "variant": "adversarial_emoji_spacing",
+      "message": "서울중앙지 ✨검✨ 김철수 검 사 입 니 다 계 좌 확 인 부 탁 드 립 니 다",
+      "expected": "voice_phishing",
+      "predicted": "voice_phishing",
+      "correct": true,
+      "risk_score": 90,
+      "rationale": "메시지가 서울중앙지검 검사를 사칭하고 계좌 확인을 부탁하는 내용이므로 보이스피싱 가능성이 높습니다.",
+      "key_signals": [
+        "검찰 사칭",
+        "계좌 확인 요청"
+      ],
+      "latency_ms": 1397.291374974884
+    },
+    {
+      "index": 6,
+      "variant": "base",
+      "message": "안녕하세요 혹시 저 기억하세요? 작년에 카페에서 뵌 적 있는데 지금 해외 파견 중인데 한국 분이셔서 너무 반가워요.",
+      "expected": "romance_scam",
+      "predicted": "romance_scam",
+      "correct": true,
+      "risk_score": 50,
+      "rationale": "해외 파견 중이라는 상황과 한국 분이라는 점을 강조하며 친밀감을 형성하려는 시도가 로맨스 스캠의 전형적인 수법입니다.",
+      "key_signals": [
+        "해외 파견 중이라는 상황",
+        "한국 분이라는 점 강조",
+        "친밀감 형성 시도"
+      ],
+      "latency_ms": 1481.3042500754818
+    },
+    {
+      "index": 7,
+      "variant": "base",
+      "message": "시리아 임무 중인 미군 대위입니다. 고독한 시간에 당신의 메시지가 큰 위로가 됩니다. 특별한 관계가 되고 싶어요.",
+      "expected": "romance_scam",
+      "predicted": "romance_scam",
+      "correct": true,
+      "risk_score": 75,
+      "rationale": "시리아 임무 중인 미군 대위를 사칭하며 고독함을 강조하고 특별한 관계를 제안하는 것은 로맨스 스캠의 전형적인 수법입니다.",
+      "key_signals": [
+        "외국 군인 사칭",
+        "고독함 강조",
+        "특별한 관계 제안"
+      ],
+      "latency_ms": 1473.2171250507236
+    },
+    {
+      "index": 8,
+      "variant": "base",
+      "message": "미국 유전 엔지니어입니다. 한국 투자 파트너를 찾고 있어요. 믿을 수 있는 분이라 연락드립니다.",
+      "expected": "romance_scam",
+      "predicted": "investment_scam",
+      "correct": false,
+      "risk_score": 70,
+      "rationale": "해외 유전 투자 제안은 고수익을 미끼로 한 사기일 가능성이 높습니다.",
+      "key_signals": [
+        "해외 유전 투자 제안",
+        "고수익 미끼"
+      ],
+      "latency_ms": 1313.1424159510061
+    },
+    {
+      "index": 9,
+      "variant": "base",
+      "message": "【LG화학 단체카톡】 내부자 추천 특급 정보. 내일 상한가 90% 확실. 선입금 500만원 가능하신 분만 연락주세요.",
+      "expected": "investment_scam",
+      "predicted": "investment_scam",
+      "correct": true,
+      "risk_score": 85,
+      "rationale": "내부자 정보를 이용한 주식 투자를 제안하며 선입금을 요구하는 것은 전형적인 투자 사기 수법입니다.",
+      "key_signals": [
+        "내부자 정보 유혹",
+        "선입금 요구"
+      ],
+      "latency_ms": 1464.786250027828
+    },
+    {
+      "index": 10,
+      "variant": "base",
+      "message": "비트코인 상장 전 한정 사전 판매. 3일 안에 500% 수익 보장. 선착순 20명만 모집합니다.",
+      "expected": "investment_scam",
+      "predicted": "investment_scam",
+      "correct": true,
+      "risk_score": 85,
+      "rationale": "비트코인 상장 전 한정 사전 판매와 3일 안에 500% 수익 보장은 전형적인 투자 사기 패턴입니다.",
+      "key_signals": [
+        "비트코인 상장 전 한정 사전 판매",
+        "3일 안에 500% 수익 보장"
+      ],
+      "latency_ms": 1496.7534170718864
+    },
+    {
+      "index": 11,
+      "variant": "base",
+      "message": "주식 리딩방 유료 가입 안내. 월 10% 수익률 실적. 지금 가입 시 첫 달 무료 체험.",
+      "expected": "investment_scam",
+      "predicted": "investment_scam",
+      "correct": true,
+      "risk_score": 70,
+      "rationale": "고수익을 보장하는 주식 리딩방 유료 가입 권유로 투자 사기 가능성이 있음.",
+      "key_signals": [
+        "고수익 보장",
+        "유료 가입 권유",
+        "실적 기반 수익률 제시"
+      ],
+      "latency_ms": 1366.4143329951912
+    },
+    {
+      "index": 12,
+      "variant": "adversarial_char_substitute",
+      "message": "[Lg화학 한정] 내부자 추천 주식 내일상한가 90% 지금 입금 가능하신 분만",
+      "expected": "investment_scam",
+      "predicted": "investment_scam",
+      "correct": true,
+      "risk_score": 85,
+      "rationale": "내부자 추천, 상한가 보장 등 비현실적인 투자 정보를 제공하며 입금을 유도하는 전형적인 투자 사기 패턴입니다.",
+      "key_signals": [
+        "내부자 추천",
+        "내일 상한가 90% 보장",
+        "입금 유도"
+      ],
+      "latency_ms": 1128.6443750141189
+    },
+    {
+      "index": 13,
+      "variant": "base",
+      "message": "저금리 3.5% 특별 대출 상품 안내. 신용등급 무관 5천만원까지 당일 승인. 오늘 오후 4시까지만 모집: 010-XXXX-XXXX",
+      "expected": "loan_scam",
+      "predicted": "loan_scam",
+      "correct": true,
+      "risk_score": 85,
+      "rationale": "저금리 특별 대출 상품 안내와 신용등급 무관, 당일 승인 등의 표현은 대출 사기의 전형적인 신호입니다.",
+      "key_signals": [
+        "저금리 특별 대출",
+        "신용등급 무관",
+        "당일 승인"
+      ],
+      "latency_ms": 1532.2514169383794
+    },
+    {
+      "index": 14,
+      "variant": "base",
+      "message": "신용회복 전문 상담. 연체 기록 삭제 가능. 선수수료 30만원 입금 후 진행.",
+      "expected": "loan_scam",
+      "predicted": "loan_scam",
+      "correct": true,
+      "risk_score": 85,
+      "rationale": "신용 회복을 위한 선수수료 요구는 전형적인 대출 사기의 수법입니다.",
+      "key_signals": [
+        "신용회복 전문 상담",
+        "선수수료 요구"
+      ],
+      "latency_ms": 1329.1900410549715
+    },
+    {
+      "index": 15,
+      "variant": "base",
+      "message": "[정부24] 2026년 근로장려금 환급 대상자 최종 선정 안내. 아래 링크에서 본인인증 후 즉시 지급 가능: http://gov24-bonus.kr/refund",
+      "expected": "subsidy_scam",
+      "predicted": "subsidy_scam",
+      "correct": true,
+      "risk_score": 85,
+      "rationale": "정부 기관을 사칭하여 환급을 미끼로 한 사기 가능성이 높습니다.",
+      "key_signals": [
+        "정부 기관 사칭",
+        "환급금 지급 유도",
+        "의심스러운 URL"
+      ],
+      "latency_ms": 1391.3172909524292
+    },
+    {
+      "index": 16,
+      "variant": "base",
+      "message": "건강보험공단입니다. 환급금 120만원이 발생했습니다. 본인인증 페이지에서 확인 바랍니다: http://hira-refund.com",
+      "expected": "subsidy_scam",
+      "predicted": "subsidy_scam",
+      "correct": true,
+      "risk_score": 85,
+      "rationale": "정부기관 사칭 및 환급금 발생을 이유로 링크 접속을 유도하는 것으로 보아 지원금 사칭의 가능성이 높습니다.",
+      "key_signals": [
+        "정부기관 사칭",
+        "환급금 발생 언급",
+        "링크 접속 유도"
+      ],
+      "latency_ms": 1108.1362089607865
+    },
+    {
+      "index": 17,
+      "variant": "adversarial_similar_domain",
+      "message": "[정부 24] 근로 장려금 환급 대상. 링크 → gov24-bonus.kr/refund",
+      "expected": "subsidy_scam",
+      "predicted": "subsidy_scam",
+      "correct": true,
+      "risk_score": 85,
+      "rationale": "정부 기관을 사칭하여 환급을 언급하고 있으며, 제공된 URL이 공식적인 정부 도메인이 아닙니다.",
+      "key_signals": [
+        "정부 기관 사칭",
+        "환급 언급",
+        "비공식 URL"
+      ],
+      "latency_ms": 1391.7270409874618
+    },
+    {
+      "index": 18,
+      "variant": "base",
+      "message": "엄마 나야. 폰이 고장나서 친구 폰으로 보내. 지금 급해서 그런데 100만원만 급하게 보내줄 수 있어?",
+      "expected": "family_impersonation",
+      "predicted": "family_impersonation",
+      "correct": true,
+      "risk_score": 70,
+      "rationale": "자녀를 사칭하며 긴급한 금전 지원을 요청하는 메시지로, 가족 사칭형 사기 가능성이 높습니다.",
+      "key_signals": [
+        "자녀 사칭",
+        "긴급한 금전 요청",
+        "친구 폰 사용"
+      ],
+      "latency_ms": 1546.849959064275
+    },
+    {
+      "index": 19,
+      "variant": "base",
+      "message": "아빠 나 민수야. 지금 친구랑 큰일이 생겼는데 급하게 50만원만 보내줘. 이따가 설명할게요.",
+      "expected": "family_impersonation",
+      "predicted": "family_impersonation",
+      "correct": true,
+      "risk_score": 85,
+      "rationale": "자녀를 사칭하여 긴급한 상황에서 금전을 요구하는 전형적인 가족 사칭 패턴입니다.",
+      "key_signals": [
+        "자녀 사칭",
+        "긴급 송금 요청",
+        "상황 설명 후 송금 요구"
+      ],
+      "latency_ms": 1404.4271250022575
+    },
+    {
+      "index": 20,
+      "variant": "adversarial_compressed",
+      "message": "엄마 나야 폰고장 친구폰 긴급 100만원 송금 부탁",
+      "expected": "family_impersonation",
+      "predicted": "family_impersonation",
+      "correct": true,
+      "risk_score": 85,
+      "rationale": "자녀를 사칭하여 긴급한 상황에서 금전을 요구하는 전형적인 가족 사칭 패턴입니다.",
+      "key_signals": [
+        "자녀 사칭",
+        "긴급 상황",
+        "금전 송금 요청"
+      ],
+      "latency_ms": 1440.3646250721067
+    },
+    {
+      "index": 21,
+      "variant": "base",
+      "message": "내일 저녁 7시 강남역에서 만날까? 지난번에 얘기한 카페에서 보자.",
+      "expected": "benign",
+      "predicted": "benign",
+      "correct": true,
+      "risk_score": 0,
+      "rationale": "일상적인 약속 잡기 내용으로 사기 의도가 없음",
+      "key_signals": [],
+      "latency_ms": 1132.8802909702063
+    },
+    {
+      "index": 22,
+      "variant": "base",
+      "message": "[NH농협] 2026년 4월 5일 송금 50,000원 완료. 잔액 1,234,567원.",
+      "expected": "benign",
+      "predicted": "benign",
+      "correct": true,
+      "risk_score": 0,
+      "rationale": "농협 은행에서 보낸 정상적인 거래 내역으로 판단됩니다.",
+      "key_signals": [],
+      "latency_ms": 1123.1484160525724
+    },
+    {
+      "index": 23,
+      "variant": "base",
+      "message": "엄마 오늘 저녁에 뭐 먹고 싶어? 김치찌개 어때?",
+      "expected": "benign",
+      "predicted": "benign",
+      "correct": true,
+      "risk_score": 0,
+      "rationale": "일상적인 가족 간 대화로 사기 의도가 없음",
+      "key_signals": [],
+      "latency_ms": 1191.871082992293
+    },
+    {
+      "index": 24,
+      "variant": "base",
+      "message": "[택배] 고객님 주문하신 상품이 배송 완료되었습니다.",
+      "expected": "benign",
+      "predicted": "benign",
+      "correct": true,
+      "risk_score": 0,
+      "rationale": "일반적인 택배 배송 완료 알림으로 사기 의도가 없어 보입니다.",
+      "key_signals": [],
+      "latency_ms": 1111.1444999696687
+    },
+    {
+      "index": 25,
+      "variant": "base",
+      "message": "안녕 친구, 지난주에 빌린 책 다음주에 돌려줄게. 너무 재밌더라.",
+      "expected": "benign",
+      "predicted": "benign",
+      "correct": true,
+      "risk_score": 0,
+      "rationale": "정상적인 개인 간 대화로 사기 의도가 없음",
+      "key_signals": [],
+      "latency_ms": 1091.5486249141395
+    }
+  ],
+  "summary": {
+    "accuracy": 0.88,
+    "primary_f1_mean": 0.869047619047619,
+    "adversarial_accuracy": 1.0,
+    "latency_p50_ms": 1391.7270409874618,
+    "total": 25,
+    "correct": 22
+  }
+}

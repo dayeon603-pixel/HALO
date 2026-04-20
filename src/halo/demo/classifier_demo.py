@@ -106,27 +106,36 @@ class SolarClassifier:
 
     API_URL = "https://api.upstage.ai/v1/solar/chat/completions"
 
-    def __init__(self, api_key: str | None = None, model: str = "solar-pro") -> None:
+    def __init__(
+        self,
+        api_key: str | None = None,
+        model: str = "solar-pro",
+        max_tokens: int | None = None,
+    ) -> None:
         self.api_key = api_key or os.environ.get("UPSTAGE_API_KEY")
         if not self.api_key:
             msg = "UPSTAGE_API_KEY required (export it or pass api_key=)"
             raise ValueError(msg)
         self.model = model
+        self.max_tokens = max_tokens
 
     def classify(self, message: str) -> ScamResult:
+        payload: dict[str, object] = {
+            "model": self.model,
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": message},
+            ],
+            "response_format": {"type": "json_object"},
+            "temperature": 0.0,
+        }
+        if self.max_tokens is not None:
+            payload["max_tokens"] = self.max_tokens
         t0 = time.perf_counter()
         response = requests.post(
             self.API_URL,
             headers={"Authorization": f"Bearer {self.api_key}"},
-            json={
-                "model": self.model,
-                "messages": [
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": message},
-                ],
-                "response_format": {"type": "json_object"},
-                "temperature": 0.0,
-            },
+            json=payload,
             timeout=30,
         )
         latency_ms = (time.perf_counter() - t0) * 1000.0
@@ -410,6 +419,10 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--samples", type=Path, help="Optional JSON file of [text, category, variant] triples.")
     p.add_argument("--report", type=Path, help="Write Markdown report to this path.")
     p.add_argument("--json", type=Path, help="Write raw JSON results to this path.")
+    p.add_argument("--model", default="solar-pro",
+                   help="Upstage model name (solar-pro, solar-pro2, solar-pro3, solar-mini).")
+    p.add_argument("--max-tokens", type=int, default=None,
+                   help="Cap on generated tokens per response. Default is server-side.")
     return p.parse_args()
 
 
@@ -420,7 +433,9 @@ def main() -> None:
         data = json.loads(args.samples.read_text(encoding="utf-8"))
         samples = [(s["text"], s["category"], s.get("variant", "base")) for s in data]
     try:
-        sys.exit(run_demo(samples=samples, report_path=args.report, json_path=args.json))
+        classifier = SolarClassifier(model=args.model, max_tokens=args.max_tokens)
+        sys.exit(run_demo(classifier=classifier, samples=samples,
+                          report_path=args.report, json_path=args.json))
     except ValueError as exc:
         logger.error(str(exc))
         sys.exit(2)
